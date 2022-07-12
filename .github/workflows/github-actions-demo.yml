@@ -1,5 +1,8 @@
 name: GitHub Actions Demo
-on: [push]
+on:
+  push:
+    branches:
+      - master
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
@@ -15,3 +18,10 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}. !!!"
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - run: docker build -t deploy-test/react-test -f Dockerfile.dev .
+      - run: docker run -e CI=true deploy-test/react-test npm test
